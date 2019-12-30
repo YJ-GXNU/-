@@ -1,0 +1,551 @@
+#include<iostream>
+#include<math.h>
+using namespace std;
+
+//顺序栈定义
+#define OK 1
+#define ERROR 0
+#define MAXSIZE  100
+int syt=1;
+typedef int Status;
+typedef double SElemType;
+typedef char CElemType;
+typedef struct{
+	SElemType *base;
+	SElemType *top;
+	int stacksize;
+}SqStack;
+
+
+typedef struct{
+	CElemType *base;
+	CElemType *top;
+	int stacksize;
+}ChStack;
+
+
+
+//数据顺序栈的初始化
+Status InitStack(SqStack &S)
+{                                        // 构造一个空栈 S 
+	S.base = new SElemType[MAXSIZE];	 //为顺序栈分配一个最大容量为MAXSIZE的数组空间
+	if(!S.base)
+		exit (OVERFLOW);    	         //存储分配失败
+	S.top = S.base;
+	S.stacksize = MAXSIZE;
+	return OK;
+}
+//数据顺序栈的入栈
+Status Push(SqStack &S,SElemType e)
+{                                        // 插入元素e为新的栈顶元素
+	if(S.top-S.base==S.stacksize)
+		return ERROR;	                 //栈满
+	*(S.top++) = e;	                     //元素e压入栈顶，栈顶指针加1
+	return OK;
+}
+//数据顺序栈的出栈
+Status Pop(SqStack &S,SElemType &e)
+{                                        // 若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK；否则返回ERROR
+	if(S.base == S.top)
+		return ERROR;                    //栈空
+	e = *(--S.top);                      //栈顶指针减1，将栈顶元素赋给e
+	return OK;
+}
+//取数据顺序栈的栈顶元素
+Status GetTop(SqStack S,SElemType &e)
+{                                        // 若栈不空，则用e返回S的栈顶元素，并返回OK；否则返回ERROR
+	if(S.top == S.base)
+		return ERROR;
+	e = *(S.top-1);                      //栈顶指针减1，将栈顶元素赋给e
+	return OK;
+}
+//数据栈空
+Status StackEmpty(SqStack &S){
+	if(S.top-S.base>0)return 1;          //栈不空返回1
+		else return 0;
+}
+
+
+
+
+
+
+//符号顺序栈的初始化
+Status InitStack(ChStack &H)
+{                                        // 构造一个空栈 H 
+	H.base = new CElemType[MAXSIZE];	 //为顺序栈分配一个最大容量为MAXSIZE的数组空间
+	if(!H.base)
+		exit (OVERFLOW);    	         //存储分配失败
+	H.top = H.base;
+	H.stacksize = MAXSIZE;
+	return OK;
+}
+//符号顺序栈的入栈
+Status Push(ChStack &H,CElemType e)
+{                                        // 插入元素e为新的栈顶元素
+	if(H.top-H.base==H.stacksize)
+		return ERROR;	                 //栈满
+	*(H.top++) = e;	                     //元素e压入栈顶，栈顶指针加1
+	return OK;
+}
+//符号顺序栈的出栈
+Status Pop(ChStack &H,CElemType &e)
+{                                        // 若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK；否则返回ERROR
+	if(H.base == H.top)
+		return ERROR;                    //栈空
+	e = *(--H.top);                      //栈顶指针减1，将栈顶元素赋给e
+	return OK;
+}
+//取符号顺序栈的栈顶元素
+Status GetTop(ChStack H,CElemType &e)
+{                                        // 若栈不空，则用e返回S的栈顶元素，并返回OK；否则返回ERROR
+	if(H.top == H.base){
+		e='0';
+		return ERROR;
+	}
+	e = *(H.top-1);                      //栈顶指针减1，将栈顶元素赋给e
+	return OK;
+}
+//符号栈空
+Status StackEmpty(ChStack &H){
+	if(H.top-H.base>0)return 1;          //栈不空返回1
+		else return 0;
+}
+
+
+//数据栈赋值
+float SetS(ChStack &SS,int &q){      
+	ChStack X;                           
+	InitStack(X);                        //X栈的构造与初始化
+	double n=1,S=0;
+	int m=0;
+	char e;                              //各变量的赋初值
+	while(StackEmpty(SS)&&m==0){         
+		Pop(SS,e);
+		Push(X,e);                       //S栈非空时出栈到X栈
+		if(e=='.'){                      //存在小数时的计算
+			n=n/10;
+			Pop(X,e);
+			while(StackEmpty(X)){
+				Pop(X,e);
+				switch(e){
+					case '0':S=S+0;break;
+		            case '1':S=S+1*n;break;
+		            case '2':S=S+2*n;break;
+	          	    case '3':S=S+3*n;break;
+	                case '4':S=S+4*n;break;
+	                case '5':S=S+5*n;break;
+	                case '6':S=S+6*n;break;
+	                case '7':S=S+7*n;break;
+                    case '8':S=S+8*n;break;
+                    case '9':S=S+9*n;break;
+	          	    default:break;
+				}
+	        	n=n/10;
+			}
+			n=1;m=1;
+		}
+	}
+	while(StackEmpty(X)){
+		Pop(X,e);
+		Push(SS,e);
+	}
+	while(StackEmpty(SS)){
+		Pop(SS,e);
+		switch(e){
+			case '0':S=S+0;break;
+		    case '1':S=S+1*n;break;
+		    case '2':S=S+2*n;break;
+	  	    case '3':S=S+3*n;break;
+	        case '4':S=S+4*n;break;
+	        case '5':S=S+5*n;break;
+	        case '6':S=S+6*n;break;
+	        case '7':S=S+7*n;break;
+            case '8':S=S+8*n;break;
+            case '9':S=S+9*n;break;
+		    default:break;
+		}
+		n=n*10;                            //整数部分的计算
+	}
+	if(q==0){
+		return S;                          
+	}
+	else if(q==1){
+		q=0;
+		return -S;                         //数值的正负判断
+	}
+}
+
+
+//单符号计算函数
+void count(SqStack &S,ChStack &H){
+	double a,b,c;
+	double pi=3.14192653589793;
+	char x;
+	Pop(S,b);
+	Pop(H,x);                              //变量赋值
+    switch(x){
+	    case '+':
+		case '-':
+			if(StackEmpty(S)){
+				Pop(S,a);
+				c=a+b;break;
+			}else syt=ERROR;
+		case '*':
+			if(StackEmpty(S)){
+				Pop(S,a);
+				c=a*b;break;
+			}else syt=ERROR;
+		case '/':
+			if(StackEmpty(S)){
+				Pop(S,a);
+				c=a/b;break;
+			}else syt=ERROR;
+		case 'c':
+			b=b/180*pi;c=cos(b);break;
+		case 'a':
+			b=b/180*pi;c=atan(b);break;
+		case 's':
+			b=b/180*pi;c=sin(b);break;
+		case 't':
+			b=b/180*pi;c=tan(b);break;
+		case 'i':
+			b=b/180*pi;c=asin(b);break;
+		case 'o':
+			b=b/180*pi;c=acos(b);break;
+		default:break;                     //不同符号进行不同计算（由于将数值存储为带符号的，所以‘-’同以加法计算）
+	}
+	Push(S,c);                             //将结果存于S栈
+}
+
+
+//三角函数计算
+/*void trigonometric(ChStack &SS,SqStack &S,CElemType ch,int &q){
+	int k=0;
+	char d=ch;
+	double t,pi=3.14192653589793;
+	ChStack D;
+	InitStack(D);
+	while(d!='('&&k==0){
+		Push(D,d);
+    	cin>>d;                            //三角函数的符号位输入
+	}
+	k=1;
+	cin>>d;
+	while(d!=')'){
+		Push(SS,d);
+		cin>>d;                            //三角函数的角度的符号输入
+	}
+	while(StackEmpty(SS)){
+		t=SetS(SS,q);                      //三角函数角度的符号转换位数值
+		t=t/180*pi;                        //三角函数的角度转换为弧度
+	}
+	Pop(D,ch);
+	switch(ch){
+		case 's':
+			t=cos(t);break;
+		case 't':
+			t=atan(t);break;
+		case 'n':
+			Pop(D,ch);
+			switch(ch){
+			    case 'i':
+				    t=sin(t);break;
+			    case 'a':
+				    t=tan(t);break;
+		        default:break;
+			}
+			break;
+		case 'c':
+			Pop(D,ch);
+			switch(ch){
+			    case 's':
+				    t=asin(t);break;
+			    case 'e':
+				    t=acos(t);break;
+		        default:break;
+			}
+		default:break;                       //三角函数的符号判断以及该三角函数的数值计算
+	}
+	while(StackEmpty(D)){
+		Pop(D,ch);                           //清空D栈
+	}
+	Push(S,t);                               //将三角函数的值存储于S栈
+}*/ 
+
+
+
+
+void trigonometric(ChStack &H,CElemType &ch){
+	char d=ch;
+	double t,pi=3.14192653589793;
+	ChStack D;
+	InitStack(D);
+	while(d=='c'||d=='o'||d=='s'||d=='a'||d=='t'||d=='n'||d=='i'){
+		Push(D,d);
+    	cin>>d;                            //三角函数的符号位输入
+	}
+	Pop(D,ch);
+	switch(ch){
+		case 's':
+			Push(H,'c');break;
+		case 't':
+			Push(H,'a');break;
+		case 'n':
+			Pop(D,ch);
+			switch(ch){
+			    case 'i':
+				    Push(H,'s');break;
+			    case 'a':
+				    Push(H,'t');break;
+		        default:break;
+			}
+			break;
+		case 'c':
+			Pop(D,ch);
+			switch(ch){
+			    case 's':
+				    Push(H,'i');break;
+			    case 'e':
+				    Push(H,'o');break;
+		        default:break;
+			}
+		default:break;                       //三角函数的符号判断以及该三角函数的数值计算
+	}
+	ch=d;
+}
+
+
+
+
+int main(){
+	SqStack S;                               //数据栈S
+	ChStack SS;                              //数据符号栈SS
+	ChStack H;                               //计算符号栈H
+	InitStack(S);
+	InitStack(SS);
+	InitStack(H);                            //各栈的初始化            
+	int n=0,q=0,t=0,o=0;
+	int enter=1,re=0;
+	double k,A;
+	char e,ch;                               //各变量赋值
+	cout<<"*****************************************************"<<endl;
+	cout<<"**                  简易的计算器                   **"<<endl;
+	cout<<"*****************************************************"<<endl;
+	cout<<"**注意：1.本计算器适用于带括号的加减乘除，小数及三 **"<<endl;
+	cout<<"**        角函数(sin,cos,tan,sec,cot,csc)的计算。  **"<<endl;
+	cout<<"**                                                 **"<<endl;
+	cout<<"**      2.输入格式：三角函数：sin(30)              **"<<endl;
+	cout<<"**                                                 **"<<endl;
+	cout<<"**                                                 **"<<endl;
+    cout<<"*****************************************************"<<endl;
+	cout<<"**欢迎您的使用，请在下面输入需要计算的式子         **"<<endl;
+	cout<<"*****************************************************"<<endl;
+	cout<<"**请输入一个公式(以#结尾): ";
+	cin>>ch;
+	while(ch!='#'){
+		switch(ch){
+			case 's':
+			case 't':
+			case 'c':
+				trigonometric(H,ch);enter=0;break;    //输入为s,t,c时执行trigonometric函数
+		    case '0':
+		    case '1':
+		    case '2':
+		    case '3':
+		    case '4':
+		    case '5':
+		    case '6':
+		    case '7':
+	    	case '8':
+	    	case '9':
+			case '.':
+		    	Push(SS,ch);
+				o=1;break;                  //输入各数值时压入数据符号栈SS
+			case '(':
+				Pop(H,e);
+				Push(H,e);
+				if(e=='-'){
+					q=0;
+				    t=1;                            //在输入‘（’时，前一个符号为‘-’的情况下，将数值符号标记q置0，括号符号标记t置1
+				}
+				Push(H,ch);
+				n=3;o=0;break;                          //其余情况直接压入符号栈H，并将计算顺序标记置为3；
+	    	case '+':
+	    		o=1;
+				while(StackEmpty(SS)){
+		            k=SetS(SS,q);
+		            Push(S,k);                      //将数据符号栈中的符号转换为数值存储于数据栈S
+				}
+				if(n<1){
+					Push(H,ch);
+					n=1;break;
+				}
+				else if(n>=1&&n<3){
+					count(S,H);
+					Push(H,ch);
+					n=1;break;
+				}
+				else if(n==3){
+					Push(H,ch);
+					n=4;break;
+				}
+				else if(n>=4){
+					count(S,H);
+					Push(H,ch);
+					n=4;break;
+				}                                  //在不同计算顺序标记值的情况下采取的不同计算方案
+				Push(H,ch);
+				n=1;break;                         //压入符号栈，并将计算顺序标记置为1（计算顺序标记的值在3以上时，置4）
+	    	case '-':
+				if(StackEmpty(SS)){
+		            k=SetS(SS,q);
+		            Push(S,k);
+				}else if(o==0) Push(S,0);
+				if(n<1){
+					Push(H,ch);
+					if(q==1){
+						q=0;
+					}else q=1;
+					n=1;break;
+				}
+				else if(n>=1&&n<3){
+					count(S,H);
+					Push(H,ch);
+					if(q==1){
+						q=0;
+					}else q=1;
+					n=1;break;
+				}
+				else if(n==3){
+					Push(H,ch);
+					if(q==1){
+						q=0;
+					}else q=1;
+					n=4;break;
+				}
+				else if(n>=4){
+					count(S,H);
+					Push(H,ch);
+					if(q==1){
+						q=0;
+					}else q=1;
+					n=4;break;
+				}                                    //在不同计算顺序标记值的情况下采取的不同计算方案
+				Push(H,ch);
+				if(q==1){
+						q=0;
+					}else q=1;
+				n=1;break;                           //压入符号栈，并将计算顺序标记置为1（计算顺序标记的值在3以上时，置4），数值符号标记置1
+	    	case '*':
+	    		o=1;
+				while(StackEmpty(SS)){
+		            k=SetS(SS,q);
+		            Push(S,k);
+				}
+				if(n<=1){
+					Push(H,ch);
+					n=2;break;
+				}
+				else if(n>=2&&n<3){
+					count(S,H);
+					Push(H,ch);
+					n=2;break;
+				}
+				else if(n==3||n==4){
+					Push(H,ch);
+					n=5;break;
+				}
+				else if(n=5){
+					count(S,H);
+					Push(H,ch);
+					n=5;break;
+				}                                     //在不同计算顺序标记值的情况下采取的不同计算方案
+				Push(H,ch);
+				n=2;break;                            //压入符号栈，并将计算顺序标记置为2（计算顺序标记的值在3以上时，置5）
+	      	case '/':
+	      		o=1;
+				while(StackEmpty(SS)){
+		            k=SetS(SS,q);
+		            Push(S,k);
+				}
+				if(n<=1){
+					Push(H,ch);
+					n=2;break;
+				}
+				else if(n>=2&&n<3){
+					count(S,H);
+					Push(H,ch);
+					n=2;break;
+				}
+				else if(n==3||n==4){
+					Push(H,ch);
+					n=5;break;
+				}
+				else if(n=5){
+					count(S,H);
+					Push(H,ch);
+					n=5;break;
+				}                                     //在不同计算顺序标记值的情况下采取的不同计算方案
+				Push(H,ch);
+				n=2;break;                            //压入符号栈，并将计算顺序标记置为2（计算顺序标记的值在3以上时，置5）
+	    	case ')':
+				while(StackEmpty(SS)){
+		            k=SetS(SS,q);
+		            Push(S,k);
+				}
+				GetTop(H,e);
+				while(e!='('){
+					count(S,H);
+					GetTop(H,e);
+				}                                      //计算括号中式子的值
+				Pop(H,e);                              //去除符号栈中的‘（’
+				while(re==0){
+					GetTop(H,e);
+				    switch(e){
+				        case '0':
+					    	n=0;re=1;break;
+				     	case '+':
+				    	case '-':
+					    	n=1;re=1;break;
+				    	case '*':
+				    	case '/':
+					    	n=2;re=1;break;
+				    	case 'c':
+				    	case 'a':
+				    	case 's':
+				    	case 't':
+				    	case 'i':
+				    	case 'o':
+					    	count(S,H);break;
+			    	}      
+				}                                       //由括号前的符号判断，回复括号前计算顺序标记的值
+				re=0;
+				
+				if(t==1){
+					Pop(S,k);
+					k=0-k;
+					t=0;
+					Push(S,k);                         //由括号符号标记的值判断整个括号计算结果的正负
+				}
+				break;
+            default:break;
+		}
+		if(!enter)enter=1;
+		else cin>>ch;
+	}
+	while(StackEmpty(SS)){
+		k=SetS(SS,q);
+		Push(S,k);
+	}
+	while(StackEmpty(H)){
+		count(S,H);                                     //剩余式子的计算
+	}
+	if(syt==ERROR){
+		cout<<"公式格式有误，请重新输入！ "<<endl;
+	}else {
+		Pop(S,A);
+	    cout<<"**计算结果                ="<<A<<endl;                           //输出结果
+	}
+	return 0;
+}
